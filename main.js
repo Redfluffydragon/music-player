@@ -108,6 +108,7 @@ const toggle = () => {
 };
 
 playPause.addEventListener('click', () => {
+  // currentAudio.play();
   toggle();
   playPause.blur();
 }, false);

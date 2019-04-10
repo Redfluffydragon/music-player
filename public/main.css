@@ -1,0 +1,126 @@
+
+* {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+button {
+  cursor: pointer;
+  background-color:rgba(255, 0, 0, .375);
+  cursor: pointer;
+  padding: 4px;
+  border: none;
+  font-size: 1em;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+#center {
+  justify-items: center;
+  width: 8vmax;
+  height: 8vmax;
+  margin: auto;
+  top: calc(50vh - 2vmax);
+  position: relative;
+}
+
+#centerSong {
+  width: 100vw;
+  left: 0;
+  text-align: center;
+  position: absolute;
+  bottom: 8vh;
+}
+
+#file {
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.playpause {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.getfile {
+  background-color:rgba(255, 0, 0, .375);
+  cursor: pointer;
+  padding: 4px;
+  border: none;
+  font-size: 1em;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+#uploadbtn {
+  display: block;
+  text-align: center;
+}
+
+#showFile, #getFile {
+  display: inline;
+}
+
+#showFile {
+  color: rgb(70, 70, 70);
+}
+
+#uploadForm [type=text] {
+  display: block;
+  margin-bottom: 8px;
+  width: 98%;
+}
+
+#uploadPopbtn {
+  position: absolute;
+  bottom: 1vmin;
+  left: 1vmin;
+  font-size: 1.2em;
+}
+
+dd {
+  font-style: italic;
+}
+
+dt {
+  cursor: pointer;
+  padding: 4px;
+}
+
+#songsList {
+  position: absolute;
+  top: 1vh;
+  max-height: 60vh;
+  overflow: auto;
+  z-index: 1;
+}
+
+#songsList dt:nth-child(even) {background-color: rgb(180, 180, 180);}
+
+#popups {
+  position: relative;
+  text-align: center;
+}
+
+.popup {
+  position: relative;
+  display: none;
+  margin: 0 auto;
+  justify-content: center;
+  box-shadow: 10px 10px 15px gray, 5px -5px 8px gray, -5px 5px 8px gray, -5px -5px 8px gray;
+  padding: 4px;
+  z-index: 4;
+  background-color: white;
+}
+
+.none {
+  display: none;
+}
+
+.inlineBlock {
+  display: inline-block;
+}
