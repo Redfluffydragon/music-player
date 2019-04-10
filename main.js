@@ -27,7 +27,12 @@ let trackTime = document.getElementById('trackTime');
 let doneGone = document.getElementById('doneGone');
 let seeTime = document.getElementById('seeTime');
 
-let songs = [{title: 'Time to Say Goodbye (Acoustic)', artist: 'John Williams', song: 'test.mp3'}];
+let preloaded = [
+  {title: 'Time to Say Goodbye (Acoustic)', artist: 'John Williams', song: 'test.mp3'},
+  {title: 'The Longing (cover)', artist: 'Patty Gurdy', song: 'Patty Gurdy - The Longing (cover).mp3'}
+];
+
+let songs;
 let getFile;
 let playing = false;
 let upPop = false;
@@ -58,7 +63,7 @@ const gotchem = (item, defalt, type=localStorage) => {
 
 const onStart = () => {
   currentSong = gotchem('currentSong', 0);
-  songs = gotchem('songs', [{title: 'Time to Say Goodbye (Acoustic)', artist: 'John Williams', song: 'test.mp3'}]);
+  songs = gotchem('songs', preloaded);
   saveTime = gotchem('saveTime', 0);
 }
 onStart();
