@@ -23,11 +23,6 @@ button {
   position: relative;
 }
 
-#play, #pause {
-  cursor: pointer;
-  position: relative;
-}
-
 #file {
   width: 0.1px;
   height: 0.1px;
@@ -35,6 +30,12 @@ button {
   opacity: 0;
   overflow: hidden;
   z-index: -1;
+}
+
+.playpause {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 .getfile {
