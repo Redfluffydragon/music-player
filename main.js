@@ -1,5 +1,6 @@
 /**
- * Github, are you there?
+ * Save songs
+ * play other songs
  */
 
 let playbtn = document.getElementById("play");
@@ -41,8 +42,14 @@ let toggle = () => {
   pausebtn.classList.toggle("none");
 };
 
-playbtn.addEventListener("click", toggle, false);
-pausebtn.addEventListener("click", toggle, false);
+playbtn.addEventListener("click", () => {
+  currentAudio.play();
+  toggle();
+}, false);
+pausebtn.addEventListener("click", () => {
+  currentAudio.pause();
+  toggle();
+}, false);
 
 uploadbtn.addEventListener("click", () => {
   let newSong;
