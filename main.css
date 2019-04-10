@@ -23,6 +23,14 @@ button {
   position: relative;
 }
 
+#centerSong {
+  width: 100vw;
+  left: 0;
+  text-align: center;
+  position: absolute;
+  bottom: 8vh;
+}
+
 #file {
   width: 0.1px;
   height: 0.1px;
@@ -80,6 +88,7 @@ dd {
 
 dt {
   cursor: pointer;
+  padding: 4px;
 }
 
 #songsList {
@@ -87,7 +96,10 @@ dt {
   top: 1vh;
   max-height: 60vh;
   overflow: auto;
+  z-index: 1;
 }
+
+#songsList dt:nth-child(even) {background-color: rgb(180, 180, 180);}
 
 #popups {
   position: relative;
