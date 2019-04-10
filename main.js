@@ -27,6 +27,8 @@ let trackTime = document.getElementById('trackTime');
 let doneGone = document.getElementById('doneGone');
 let seeTime = document.getElementById('seeTime');
 
+let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+
 let preloaded = [
   {title: 'Time to Say Goodbye (Acoustic)', artist: 'John Williams', song: 'test.mp3'},
   {title: 'The Longing (cover)', artist: 'Patty Gurdy', song: 'Patty Gurdy - The Longing (cover).mp3'}
@@ -220,6 +222,7 @@ function moveIndicator(e) {
   currentAudio.currentTime = saveTime;
 };
 
+//for scrubbing
 trackTime.addEventListener('click', moveIndicator, false);
 
 timeIndicate.addEventListener('mousedown', e => {
@@ -251,8 +254,8 @@ document.addEventListener('keydown', e => {
   if (e.keyCode === 32 && !upPop) { toggle(); }
 }, false);
 
-
-document.addEventListener('mousedown', e => {
+let touchMouse = isMobile ? 'touchdown' : 'mousedown';
+document.addEventListener(touchMouse, e => {
   if (e.target.closest('.popup')) return;
   if (upPop) {closeAll();}
 }, false);
