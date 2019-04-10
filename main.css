@@ -5,13 +5,20 @@
 
 button {
   cursor: pointer;
-  background-color:rgba(255, 0, 0, .375);
+  background-color:rgba(255, 0, 0, .6);
   cursor: pointer;
   padding: 4px;
   border: none;
   font-size: 1em;
   margin-top: 8px;
   margin-bottom: 0;
+  border-radius: 2px;
+}
+
+audio {
+  width: 40vw;
+  position: absolute;
+  right: 0;
 }
 
 #center {
@@ -27,8 +34,42 @@ button {
   width: 100vw;
   left: 0;
   text-align: center;
+  align-content: center;
   position: absolute;
   bottom: 8vh;
+}
+
+#trackTime {
+  width: 40vw;
+  height: 7px;
+  background-color: gray;
+  position: absolute;
+  border-radius: 2.5px;
+  left: 30vw;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#timeIndicate {
+  width: 10px;
+  height: 7px;
+  background: black;
+  border-radius: 3.5px;
+  position: absolute;
+  display: inline-block;
+  margin: 0;
+  left: -7px;
+}
+
+#doneGone {
+  position: absolute;
+  left: 0;
+  height: 7px;
+  background: rgba(255, 0, 0, .5);
+  width: 0;
+  margin: 0;
+  display: inline-block;
+  border-radius: 3.5px;
 }
 
 #file {
@@ -47,7 +88,7 @@ button {
 }
 
 .getfile {
-  background-color:rgba(255, 0, 0, .375);
+  background-color:rgba(255, 0, 0, .5);
   cursor: pointer;
   padding: 4px;
   border: none;
@@ -99,7 +140,13 @@ dt {
   z-index: 1;
 }
 
-#songsList dt:nth-child(even) {background-color: rgb(180, 180, 180);}
+#songsList dt:nth-child(even) {background-color: rgb(200, 200, 200);}
+
+#clearall {
+  position: absolute;
+  bottom: 1vh;
+  right: 1vh;
+}
 
 #popups {
   position: relative;
