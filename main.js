@@ -40,6 +40,7 @@ let getFile;
 let playing = false;
 let upPop = false;
 let next = 'next';
+let loop = true;
 let currentSong = 0;
 
 let saveTime;
@@ -87,13 +88,13 @@ function clickList() {
   let removeArtist = songsList.getElementsByTagName('dd');
   for (let i = 0; i < getList.length; i++) {
     if (i === currentSong) {
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
     }
     getList[i].addEventListener('click', e => {
       for (let h = 0; h < getList.length; h++) {
         getList[h].style.backgroundColor = '';
       }
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
       let tempName = getList[i].textContent.replace(removeArtist[i].textContent, '');
       let findName = getList[i].textContent;
       let tempSong;
@@ -112,6 +113,7 @@ function clickList() {
         saveTime = 0;
         currentAudio.src = songs[currentSong].song;
         currentAudio.currentTime = saveTime;
+        currentAudio.load();
         play();
       }
       else { toggle(); }
@@ -170,6 +172,27 @@ uploadbtn.addEventListener('click', () => {
   }
   else  */if (getFile) {
     newSong = getFile.name;
+    let xhr = new XMLHttpRequest();
+    xhr.responseType = "arraybuffer";
+    xhr.open("GET", "test.mp3", true);
+    xhr.onload = function() {
+      console.log(xhr.response);
+      audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.playbackRate.value = playbackControl.value;
+        source.connect(audioCtx.destination);
+        source.loop = true;
+
+        loopstartControl.setAttribute('max', Math.floor(songLength));
+        loopendControl.setAttribute('max', Math.floor(songLength));
+      });
+    }
+    /* getFile.decodeAudioData(compressedBuffer).then(function(decodedData) {
+      // use the decoded data here
+      console.log(decodedData);
+     }); */
   }
   else {
     return;
@@ -246,7 +269,7 @@ function setNextSong(list=songs) {
   seeSong.textContent = list[currentSong].title;
   let getList = songsList.getElementsByTagName('dt');
   for (let i = 0; i < getList.length; i++) {
-    getList[i].style.backgroundColor = i === currentSong ? 'rgba(255, 0, 0, 0.6)' : '';
+    getList[i].style.backgroundColor = i === currentSong ? 'rgba(255, 0, 0, .5)' : '';
   }
   play();
 }
@@ -254,6 +277,9 @@ function setNextSong(list=songs) {
 const nextTrack = {
   'next': () => {
     currentSong++;
+    if (loop && songs[currentSong] === undefined) {
+      currentSong = 0;
+    }
     setNextSong();
   },
   'shuffle': () => {
@@ -303,3 +329,61 @@ document.getElementById('clearall').addEventListener('click', () => {
   location.reload();
   console.log('Cleared!');
 }, false);
+
+let db;
+
+function createStore() {
+  window.indexedDB;
+  IDBTransaction = window.IDBTransaction;
+  dbVersion = 1;
+
+  let request = indexedDB.open("songs", dbVersion);
+  request.onsuccess = e => {
+    console.log("Success creating/accessing IndexedDB database");
+    db = request.result;
+
+    db.onerror = e => {
+      console.log("Error creating/accessing IndexedDB database");
+    };
+  };
+  request.onerror = e => {
+    console.log("Error creating/accessing IndexedDB database");    
+  }
+
+  request.onupgradeneeded = e => {
+    db = e.target.result;
+    createObjectStore(e.target.result);
+    console.log('upgrade needed')
+  };
+
+  console.log('Creating objectStore');
+  dataBase.createObjectStore("songs");
+
+};
+
+function downloadFile(file) {
+  let xhr = new XMLHttpRequest();
+  let blob;
+  xhr.responseType = 'blob';
+  xhr.onreadystatechange = function(e) {
+    console.log('state changed');
+    if (xhr.state > 2) {
+      console.log('new state');
+    }
+  };
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      console.log('File gotten');
+      blob = xhr.response;
+      console.log(xhr.response);
+      // ~store in indexedDB
+    }
+  };
+  xhr.onerror = function(e) {
+    console.log(e, 'error');
+  }
+  console.log(xhr);
+  xhr.open('GET', file, true);
+}
+
+// downloadFile("https://preview.redd.it/3nxmurojdnr21.jpg?width=640&crop=smart&auto=webp&s=67e2f831324c58e4f99456dec23cbee22c16c101");

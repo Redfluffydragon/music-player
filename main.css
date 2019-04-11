@@ -52,13 +52,17 @@ audio {
 
 #timeIndicate {
   width: 10px;
-  height: 13px;
+  height: 7px;
   background: black;
   border-radius: 3.5px;
   position: absolute;
   display: inline-block;
   margin: 0;
   left: -7px;
+}
+
+#timeIndicate:hover {
+  height: 13px;
   top: -3px;
 }
 
@@ -147,6 +151,7 @@ dt {
   position: absolute;
   bottom: 1vh;
   right: 1vh;
+  font-size: 1.2em;
 }
 
 #popups {
@@ -178,6 +183,10 @@ dt {
 @media screen and (max-width: 520px) {
   #centersong {bottom: 20vh;}
   #trackTime {width: 80vw; left: 10vw;}
+  #timeIndicate { 
+    height: 13px;
+    top: -3px;
+  }
 }
 
 .none {
