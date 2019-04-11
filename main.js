@@ -228,12 +228,15 @@ function moveIndicator(e) {
 //for scrubbing
 trackTime.addEventListener('click', moveIndicator, false);
 
-timeIndicate.addEventListener('mousedown', e => {
-  document.addEventListener('mousemove', moveIndicator, false);
+let whichDown = isMobile ? 'touchstart' : 'mousedown';
+let whichMove = isMobile ? 'touchmove' : 'mousemove';
+let whichUp = isMobile ? 'touchend' : 'mouseup';
+timeIndicate.addEventListener(whichDown, e => {
+  document.addEventListener(whichMove, moveIndicator, false);
 }, false);
 
-document.addEventListener('mouseup', e => {
-  document.removeEventListener('mousemove', moveIndicator, false);
+document.addEventListener(whichUp, e => {
+  document.removeEventListener(whichMove, moveIndicator, false);
 }, false);
 
 function setNextSong(list=songs) {
@@ -284,8 +287,7 @@ document.addEventListener('keydown', e => {
   if (e.keyCode === 32 && !upPop) { toggle(); }
 }, false);
 
-let touchMouse = isMobile ? 'touchstart' : 'mousedown';
-document.addEventListener(touchMouse, e => {
+document.addEventListener(whichDown, e => {
   if (e.target.closest('.popup')) return;
   if (upPop) {closeAll();}
 }, false);
