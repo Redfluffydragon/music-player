@@ -173,7 +173,11 @@ dt {
   width: 100vw;
   background: rgba(0, 0, 0, .3);
   z-index: 3;
-  /* display: none; */
+}
+
+@media screen and (max-width: 520px) {
+  #centersong {bottom: 15vh;}
+  #trackTime {width: 80vw;}
 }
 
 .none {
