@@ -36,7 +36,7 @@ audio {
   text-align: center;
   align-content: center;
   position: absolute;
-  bottom: 8vh;
+  bottom: 15vh;
 }
 
 #trackTime {
@@ -176,8 +176,8 @@ dt {
 }
 
 @media screen and (max-width: 520px) {
-  #centersong {bottom: 15vh;}
-  #trackTime {width: 80vw;}
+  #centersong {bottom: 20vh;}
+  #trackTime {width: 80vw; left: 10vw;}
 }
 
 .none {
