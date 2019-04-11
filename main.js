@@ -34,7 +34,8 @@ let preloaded = [
   {title: 'The Longing (cover)', artist: 'Patty Gurdy', song: 'Patty Gurdy - The Longing (cover).mp3'}
 ];
 
-let songs;
+let songs = [];
+let unplayed = [];
 let getFile;
 let playing = false;
 let upPop = false;
@@ -44,14 +45,6 @@ let currentSong = 0;
 let saveTime;
 let currentAudio = document.createElement('audio');
 document.body.appendChild(currentAudio);
-
-const nextTrack = {
-  'next': () => {
-
-  },
-  'shuffle': () => {},
-  'random': () => {}
-}
 
 const gotchem = (item, defalt, type=localStorage) => {
   let getem = type.getItem(item);
@@ -65,8 +58,9 @@ const gotchem = (item, defalt, type=localStorage) => {
 
 const onStart = () => {
   currentSong = gotchem('currentSong', 0);
-  songs = gotchem('songs', preloaded);
   saveTime = gotchem('saveTime', 0);
+  songs = gotchem('songs', preloaded);
+  unplayed = gotchem('unplayed', songs);
 }
 onStart();
 
@@ -81,6 +75,7 @@ const draw = () => {
     dt.appendChild(title);
     dd.appendChild(artist);
     dt.appendChild(dd);
+    dt.className = 'dt';
     songsList.appendChild(dt);
   }
   seeSong.textContent = songs[currentSong].title;
@@ -91,7 +86,14 @@ function clickList() {
   let getList = songsList.getElementsByTagName('dt');
   let removeArtist = songsList.getElementsByTagName('dd');
   for (let i = 0; i < getList.length; i++) {
-    getList[i].addEventListener('click', () => {
+    if (i === currentSong) {
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
+    }
+    getList[i].addEventListener('click', e => {
+      for (let h = 0; h < getList.length; h++) {
+        getList[h].style.backgroundColor = '';
+      }
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
       let tempName = getList[i].textContent.replace(removeArtist[i].textContent, '');
       let findName = getList[i].textContent;
       let tempSong;
@@ -202,6 +204,7 @@ file.addEventListener('change', () => {
 //open the upload modal
 uploadPopbtn.addEventListener('click', () => {
   uploadpopup.classList.add('inlineBlock');
+  shadow.classList.remove('none');
   upPop = true;
 }, false);
 
@@ -233,12 +236,39 @@ document.addEventListener('mouseup', e => {
   document.removeEventListener('mousemove', moveIndicator, false);
 }, false);
 
-currentAudio.addEventListener('onended', () => {
-  nextTrack[next]();
-}, false);
+function setNextSong(list=songs) {
+  saveTime = 0;
+  currentAudio.currentTime = saveTime;
+  currentAudio.src = list[currentSong].song;
+  seeSong.textContent = list[currentSong].title;
+  let getList = songsList.getElementsByTagName('dt');
+  for (let i = 0; i < getList.length; i++) {
+    getList[i].style.backgroundColor = i === currentSong ? 'rgba(255, 0, 0, 0.6)' : '';
+  }
+  play();
+}
+
+const nextTrack = {
+  'next': () => {
+    currentSong++;
+    setNextSong();
+  },
+  'shuffle': () => {
+    unplayed.splice(currentSong, 1);//might not work
+    currentSong = Math.round(Math.random()*unplayed.length-1);
+    setNextSong(unplayed);
+  },
+  'random': () => {
+    currentSong = Math.round(Math.random() * songs.length-1);
+    setNextSong();
+  }
+}
+
+currentAudio.addEventListener('ended', nextTrack[next], false);
 
 const closeAll = () => {
   uploadpopup.classList.remove('inlineBlock');
+  shadow.classList.add('none');
   getTitle.value = '';
   getArtist.value = '';
   temptitle = '';
@@ -254,7 +284,7 @@ document.addEventListener('keydown', e => {
   if (e.keyCode === 32 && !upPop) { toggle(); }
 }, false);
 
-let touchMouse = isMobile ? 'touchdown' : 'mousedown';
+let touchMouse = isMobile ? 'touchstart' : 'mousedown';
 document.addEventListener(touchMouse, e => {
   if (e.target.closest('.popup')) return;
   if (upPop) {closeAll();}

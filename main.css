@@ -52,13 +52,14 @@ audio {
 
 #timeIndicate {
   width: 10px;
-  height: 7px;
+  height: 13px;
   background: black;
   border-radius: 3.5px;
   position: absolute;
   display: inline-block;
   margin: 0;
   left: -7px;
+  top: -3px;
 }
 
 #doneGone {
@@ -158,10 +159,21 @@ dt {
   display: none;
   margin: 0 auto;
   justify-content: center;
-  box-shadow: 10px 10px 15px gray, 5px -5px 8px gray, -5px 5px 8px gray, -5px -5px 8px gray;
+  box-shadow: 6px 6px 10px black, 5px -5px 8px black, -5px 5px 8px black, -5px -5px 8px black;
   padding: 4px;
   z-index: 4;
   background-color: white;
+}
+
+#shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, .3);
+  z-index: 3;
+  /* display: none; */
 }
 
 .none {
@@ -170,4 +182,8 @@ dt {
 
 .inlineBlock {
   display: inline-block;
+}
+
+.initial {
+  display: initial;
 }
