@@ -30,7 +30,7 @@ let seeTime = document.getElementById('seeTime');
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
 let preloaded = [
-  {title: 'Time to Say Goodbye (Acoustic)', artist: 'John Williams', song: 'test.mp3'},
+  {title: 'Time to Say Goodbye (Acoustic)', artist: 'Jeff Williams', song: 'test.mp3'},
   {title: 'The Longing (cover)', artist: 'Patty Gurdy', song: 'Patty Gurdy - The Longing (cover).mp3'}
 ];
 
@@ -165,16 +165,15 @@ uploadbtn.addEventListener('click', () => {
   let newSong;
   let title;
   let artist;
-  /* if (byUrl.value !== '') {
+  if (byUrl.value !== '') {
     let url = byUrl.value;
     newSong = url.includes('drive.google') ? 'http://docs.google.com/uc?export=open&id='+url.slice(-33) : url;
     temptitle = url.slice(0, 40);
   }
-  else  */if (getFile) {
+  else if (getFile) {
     newSong = getFile.name;
     let xhr = new XMLHttpRequest();
     xhr.responseType = "arraybuffer";
-    xhr.open("GET", "test.mp3", true);
     xhr.onload = function() {
       console.log(xhr.response);
       audioCtx.decodeAudioData(audioData, function(buffer) {
@@ -189,14 +188,9 @@ uploadbtn.addEventListener('click', () => {
         loopendControl.setAttribute('max', Math.floor(songLength));
       });
     }
-    /* getFile.decodeAudioData(compressedBuffer).then(function(decodedData) {
-      // use the decoded data here
-      console.log(decodedData);
-     }); */
+    xhr.open("GET", "test.mp3", true);
   }
-  else {
-    return;
-  }
+  else { return; }
   title = getTitle.value ? getTitle.value : temptitle;
   artist = getArtist.value ? getArtist.value : tempartist;
   playing = false;
@@ -385,5 +379,3 @@ function downloadFile(file) {
   console.log(xhr);
   xhr.open('GET', file, true);
 }
-
-// downloadFile("https://preview.redd.it/3nxmurojdnr21.jpg?width=640&crop=smart&auto=webp&s=67e2f831324c58e4f99456dec23cbee22c16c101");
