@@ -18,6 +18,8 @@ let uploadPopbtn = document.getElementById('uploadPopbtn');
 let uploadpopup = document.getElementById('uploadpopup');
 let byUrl = document.getElementById('byUrl');
 
+let images = document.getElementsByTagName('img');
+
 let songsList = document.getElementById('songsList');
 let getList = songsList.getElementsByClassName('dt');
 
@@ -27,6 +29,8 @@ let timeIndicate = document.getElementById('timeIndicate');
 let trackTime = document.getElementById('trackTime');
 let doneGone = document.getElementById('doneGone');
 let seeTime = document.getElementById('seeTime');
+
+let modebtn = document.getElementById('modebtn');
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
@@ -52,6 +56,7 @@ let songs = gotchem('songs', preloaded);
 let unplayed = gotchem('unplayed', songs);
 let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
+let lmode = gotchem('lmode', true);
 
 let indicator = () => {
   requestAnimationFrame(() => {
@@ -80,7 +85,7 @@ let draw = () => {
   seeSong.textContent = songs[currentSong].title;
   for (let i in getList) {
     if (getList[i].textContent === songs[currentSong].title+songs[currentSong].artist) {
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
+      getList[i].setAttribute('selected', true);
     }
   }
 };
@@ -88,9 +93,9 @@ let draw = () => {
 let clickList = () => {
   songsList.addEventListener('click', e => {
     for (let i = 0; i < getList.length; i++) {
-      getList[i].style.backgroundColor = '';
+      getList[i].setAttribute('selected', false);
     }
-    e.target.style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    e.target.setAttribute('selected', true);
     
     let findName = e.target.innerHTML.split('<br>')[0];
     let tempSong;
@@ -112,6 +117,12 @@ let clickList = () => {
     seeSong.textContent = findName;
   }, false);
 };
+
+let switchList = () => {
+  for (let i = 0; i < getList.length; i++) {
+    getList[i].setAttribute('lmode', lmode);
+  }
+}
 
 let onStart = () => {
   draw();
@@ -255,17 +266,8 @@ function setNextSong(list=songs) {
   currentAudio.src = list[currentSong].song;
   seeSong.textContent = list[currentSong].title;
   let getList = songsList.getElementsByTagName('dt');
-  let getDescr = songsList.getElementsByTagName('dd');
-  console.log(getDescr);
   for (let i = 0; i < getList.length; i++) {
-    if (i === currentSong) {
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
-      getDescr[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
-    }
-    else {
-      getList[i].style.backgroundColor = '';
-      getDescr[i].style.backgroundColor = '';
-    }
+    getList[i].setAttribute('selected', i === currentSong ? true : false);
   }
   play();
 }
@@ -304,11 +306,29 @@ const closeAll = () => {
   upPop = false;
 };
 
+let switchMode = () => {
+  lmode = lmode ? false : true;
+  switchList();
+  everything.classList.toggle('reverse');
+  playbtn.classList.toggle('invert');
+  pausebtn.classList.toggle('invert');
+}
+
+modebtn.addEventListener('click', switchMode, false);
+
 document.addEventListener('keydown', e => {
-  if (e.keyCode === 27) { closeAll(); }
-  if (e.keyCode === 32 && !upPop) { toggle(); }
-  if (e.keyCode === 176) {}//skip to next track
-  if (e.keyCode === 177) {}//skip backwards
+  let k = e.keyCode;
+  if (k === 27) { closeAll(); }
+  if (k === 32 && !upPop) { toggle(); }
+  if (k === 77) {switchMode();}
+  if (k === 176) {nextTrack[next]();} //skip to next track
+  if (k === 177) {
+    if (currentAudio.currentTime > 1) { //check where others cut off
+      currentAudio.currentTime = 0;
+    }
+  }//skip backwards
+  if (k === 39) {currentAudio.currentTime += 5;}
+  if (k === 37) {currentAudio.currentTime -= 5;}
 }, false);
 
 document.addEventListener(whichDown, e => {
