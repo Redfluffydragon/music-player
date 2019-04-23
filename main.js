@@ -4,6 +4,7 @@
  * 
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
  */
+// localStorage.clear();
 
 let playbtn = document.getElementById('play');
 let pausebtn = document.getElementById('pause');
@@ -18,6 +19,7 @@ let uploadpopup = document.getElementById('uploadpopup');
 let byUrl = document.getElementById('byUrl');
 
 let songsList = document.getElementById('songsList');
+let getList = songsList.getElementsByClassName('dt');
 
 let seeSong = document.getElementById('seeSong');
 
@@ -33,92 +35,90 @@ let preloaded = [
   {title: 'The Longing (cover)', artist: 'Patty Gurdy', song: 'Patty Gurdy - The Longing (cover).mp3'}
 ];
 
-let songs = [];
-let unplayed = [];
 let getFile;
 let upPop = false;
-let next = 'next';
-let loop = true;
-let currentSong = 0;
 
-let saveTime;
-let currentAudio = document.createElement('audio');
-document.body.appendChild(currentAudio);
+let currentAudio = document.getElementById('currentAudio');
 
 let gotchem = (item, defalt, type=localStorage) => {
   let getem = type.getItem(item);
-  if (getem !== null && JSON.parse(getem) !== undefined) {
-    return JSON.parse(getem);
-  }
+  if (getem !== null && JSON.parse(getem) !== undefined) { return JSON.parse(getem); }
   return defalt;
 };
 
-let onStart = () => {
-  currentSong = gotchem('currentSong', 0);
-  saveTime = gotchem('saveTime', 0);
-  songs = gotchem('songs', preloaded);
-  unplayed = gotchem('unplayed', songs);
-}
-onStart();
+let currentSong = gotchem('currentSong', 0);
+let saveTime = gotchem('saveTime', 0);
+let songs = gotchem('songs', preloaded);
+let unplayed = gotchem('unplayed', songs);
+let next = gotchem('next', 'next');
+let loop = gotchem('loop', true);
+
+let indicator = () => {
+  requestAnimationFrame(() => {
+    let percent = 100 * (currentAudio.currentTime/currentAudio.duration);
+    doneGone.style.width = percent + '%';
+    timeIndicate.style.marginLeft = doneGone.offsetWidth + 'px';
+  });
+  seeTime.textContent = `${toMinutes(currentAudio.currentTime)}/${toMinutes(currentAudio.duration)}`
+};
 
 let draw = () => {
-  currentAudio.src = songs[currentSong].song;  
+  currentAudio.src = songs[currentSong].song;
+  currentAudio.addEventListener('loadedmetadata', () => {//show correct place on reload and open
+    currentAudio.currentTime = saveTime;
+    indicator();
+  }, false);
+
   songsList.innerHTML = '';
   for (i in songs) {
     let dt = document.createElement('dt');
-    let title = document.createTextNode(songs[i].title);
-    let dd = document.createElement('dd');
-    let artist = document.createTextNode(songs[i].artist);
-    dt.appendChild(title);
-    dd.appendChild(artist);
+    let title = songs[i].title+'<br>'+songs[i].artist;
+    dt.innerHTML = title;
     dt.className = 'dt';
     songsList.appendChild(dt);
-    songsList.appendChild(dd);
   }
   seeSong.textContent = songs[currentSong].title;
-  clickList();
+  for (let i in getList) {
+    if (getList[i].textContent === songs[currentSong].title+songs[currentSong].artist) {
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    }
+  }
 };
 
 let clickList = () => {
-  let getList = songsList.getElementsByTagName('dt');
-  let removeArtist = songsList.getElementsByTagName('dd');
-  for (let i = 0; i < getList.length; i++) {
-    if (i === currentSong) {
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
+  songsList.addEventListener('click', e => {
+    for (let i = 0; i < getList.length; i++) {
+      getList[i].style.backgroundColor = '';
     }
-    getList[i].addEventListener('click', e => {
-      for (let h = 0; h < getList.length; h++) {
-        getList[h].style.backgroundColor = '';
+    e.target.style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    
+    let findName = e.target.innerHTML.split('<br>')[0];
+    let tempSong;
+    for (let j in songs) { //get song by title
+      if (songs[j].title === findName) {
+        tempSong = songs[j];
       }
-      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
-      let tempName = getList[i].textContent.replace(removeArtist[i].textContent, '');
-      let findName = getList[i].textContent;
-      let tempSong;
-      for (j in songs) {
-        if (songs[j].title+songs[j].artist === findName) {
-          tempSong = songs[j].song;
-        }
-      }
-      if (songs[currentSong].song !== tempSong) {
-        for (let i = 0; i < songs.length; i++) {
-          if (tempName === songs[i].title) {
-            currentSong = i;
-            localStorage.setItem('currentSong', JSON.stringify(currentSong));
-          }
-        }
-        saveTime = 0;
-        currentAudio.src = songs[currentSong].song;
-        currentAudio.currentTime = saveTime;
-        currentAudio.load();
-        play();
-      }
-      else { toggle(); }
-      seeSong.textContent = tempName;
-    }, false);
-  }
+    }
+    if (songs[currentSong] !== tempSong) { //switch and play
+      currentSong = songs.indexOf(tempSong);
+      localStorage.setItem('currentSong', JSON.stringify(currentSong));
+      saveTime = 0;
+      currentAudio.currentTime = saveTime;
+      currentAudio.src = songs[currentSong].song;
+      currentAudio.load();
+      play();
+    }
+    else { toggle(); } //don't switch, and toggle
+    seeSong.textContent = findName;
+  }, false);
 };
 
-draw();
+let onStart = () => {
+  draw();
+  clickList();
+}
+window.addEventListener('load', onStart, false);
+
 
 let play = () => {
   currentAudio.currentTime = saveTime;
@@ -226,15 +226,6 @@ uploadPopbtn.addEventListener('click', () => {
   upPop = true;
 }, false);
 
-currentAudio.addEventListener('timeupdate', () => {
-  requestAnimationFrame(()=> {
-    let percent = 100 * (currentAudio.currentTime/currentAudio.duration);
-    doneGone.style.width = percent + '%';
-    timeIndicate.style.marginLeft = doneGone.offsetWidth + 'px';
-  });
-  seeTime.textContent = `${toMinutes(currentAudio.currentTime)}/${toMinutes(currentAudio.duration)}`
-}, false);
-
 let moveIndicator = e => {
   e.preventDefault();
   let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
@@ -244,12 +235,16 @@ let moveIndicator = e => {
   currentAudio.currentTime = saveTime;
 };
 
+currentAudio.addEventListener('timeupdate', indicator, false);
+
 //for scrubbing
 let whichDown = isMobile ? 'touchstart' : 'mousedown';
 let whichMove = isMobile ? 'touchmove' : 'mousemove';
 let whichUp = isMobile ? 'touchend' : 'mouseup';
+
 //click/tap to place in track
 trackTime.addEventListener('click', moveIndicator, false);
+
 //drag to place in track
 timeIndicate.addEventListener(whichDown, e => { document.addEventListener(whichMove, moveIndicator, {passive: false}); }, false);
 document.addEventListener(whichUp, e => { document.removeEventListener(whichMove, moveIndicator, {passive: false}); }, false);
@@ -260,8 +255,17 @@ function setNextSong(list=songs) {
   currentAudio.src = list[currentSong].song;
   seeSong.textContent = list[currentSong].title;
   let getList = songsList.getElementsByTagName('dt');
+  let getDescr = songsList.getElementsByTagName('dd');
+  console.log(getDescr);
   for (let i = 0; i < getList.length; i++) {
-    getList[i].style.backgroundColor = i === currentSong ? 'rgba(255, 0, 0, .5)' : '';
+    if (i === currentSong) {
+      getList[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
+      getDescr[i].style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    }
+    else {
+      getList[i].style.backgroundColor = '';
+      getDescr[i].style.backgroundColor = '';
+    }
   }
   play();
 }
@@ -315,6 +319,7 @@ document.addEventListener(whichDown, e => {
 window.addEventListener('beforeunload', () => {
   saveTime = currentAudio.currentTime;
   localStorage.setItem('saveTime', JSON.stringify(saveTime));
+  localStorage.setItem('currentSong', JSON.stringify(currentSong));
 }, false);
 
 document.getElementById('clearall').addEventListener('click', () => {

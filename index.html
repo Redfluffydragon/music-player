@@ -8,10 +8,12 @@
     <title>Musicorae</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" sizes="620x620" href="apple-touch-icon.png">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" async>
     <script src="main.js" type="text/javascript" async></script>
   </head>
   <body>
+    <audio id="currentAudio"></audio>
+
     <div id="center">
       <button id="playPause" class="playpause" title="Play/pause songs">
         <img src="play.png" id="play" style="width: 100%; height: 100%;" alt="Play button">
@@ -21,10 +23,6 @@
 
     <div id="seeSongs">
       <dl id="songsList">
-        <template>
-          <dt>Song name</dt>
-          <dd>Artist</dd>
-        </template>
       </dl>
     </div>
 
