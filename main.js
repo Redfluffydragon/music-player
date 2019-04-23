@@ -1,6 +1,5 @@
 /**
- * Save songs
- * play other songs after current song ends
+ * Save songs uploaded
  * Firebase?
  * 
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
@@ -37,7 +36,6 @@ let preloaded = [
 let songs = [];
 let unplayed = [];
 let getFile;
-let playing = false;
 let upPop = false;
 let next = 'next';
 let loop = true;
@@ -47,17 +45,15 @@ let saveTime;
 let currentAudio = document.createElement('audio');
 document.body.appendChild(currentAudio);
 
-const gotchem = (item, defalt, type=localStorage) => {
+let gotchem = (item, defalt, type=localStorage) => {
   let getem = type.getItem(item);
   if (getem !== null && JSON.parse(getem) !== undefined) {
     return JSON.parse(getem);
   }
-  else {
-    return defalt;
-  }
+  return defalt;
 };
 
-const onStart = () => {
+let onStart = () => {
   currentSong = gotchem('currentSong', 0);
   saveTime = gotchem('saveTime', 0);
   songs = gotchem('songs', preloaded);
@@ -65,7 +61,7 @@ const onStart = () => {
 }
 onStart();
 
-const draw = () => {
+let draw = () => {
   currentAudio.src = songs[currentSong].song;  
   songsList.innerHTML = '';
   for (i in songs) {
@@ -75,15 +71,15 @@ const draw = () => {
     let artist = document.createTextNode(songs[i].artist);
     dt.appendChild(title);
     dd.appendChild(artist);
-    dt.appendChild(dd);
     dt.className = 'dt';
     songsList.appendChild(dt);
+    songsList.appendChild(dd);
   }
   seeSong.textContent = songs[currentSong].title;
   clickList();
 };
 
-function clickList() {
+let clickList = () => {
   let getList = songsList.getElementsByTagName('dt');
   let removeArtist = songsList.getElementsByTagName('dd');
   for (let i = 0; i < getList.length; i++) {
@@ -124,34 +120,40 @@ function clickList() {
 
 draw();
 
-const play = () => {
-  playing = true;
+let play = () => {
   currentAudio.currentTime = saveTime;
   currentAudio.play();
   playbtn.classList.add('none');
   pausebtn.classList.remove('none');
 };
 
-const pause = () => {
-  playing = false;
+let pause = () => {
   currentAudio.pause();
   saveTime = currentAudio.currentTime;
   pausebtn.classList.add('none');
   playbtn.classList.remove('none');
 };
 
-const toggle = () => {
-  playing ? pause() : play();
-};
+let toggle = () => currentAudio.paused ? play() : pause();
 
 function toMinutes(time) {
   let minutes = Math.trunc(time/60);
   let seconds = Math.round((Math.trunc(time-minutes*60)/100)*100);
-  if (seconds < 10) {
-    seconds = '0' + seconds;
-  }
+  if (seconds < 10) { seconds = '0' + seconds; }
   return minutes + ':' + seconds;
 }
+
+//for outside media controls
+currentAudio.addEventListener('play', () => {
+  playbtn.classList.add('none');
+  pausebtn.classList.remove('none');
+}, false);
+
+currentAudio.addEventListener('pause', () => {
+  saveTime = currentAudio.currentTime;
+  pausebtn.classList.add('none');
+  playbtn.classList.remove('none');
+}, false);
 
 playPause.addEventListener('click', () => {
   toggle();
@@ -193,7 +195,6 @@ uploadbtn.addEventListener('click', () => {
   else { return; }
   title = getTitle.value ? getTitle.value : temptitle;
   artist = getArtist.value ? getArtist.value : tempartist;
-  playing = false;
   songs.push({title: title, artist: artist, song: newSong});
   localStorage.setItem('songs', JSON.stringify(songs));
   draw();
@@ -234,27 +235,24 @@ currentAudio.addEventListener('timeupdate', () => {
   seeTime.textContent = `${toMinutes(currentAudio.currentTime)}/${toMinutes(currentAudio.duration)}`
 }, false);
 
-function moveIndicator(e) {
+let moveIndicator = e => {
   e.preventDefault();
-  let newTime = e.clientX - trackTime.offsetLeft;
+  let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+  let newTime = clientX - trackTime.offsetLeft;
   timePercent = newTime/trackTime.offsetWidth;
   saveTime = timePercent*currentAudio.duration;
   currentAudio.currentTime = saveTime;
 };
 
 //for scrubbing
-trackTime.addEventListener('click', moveIndicator, false);
-
 let whichDown = isMobile ? 'touchstart' : 'mousedown';
 let whichMove = isMobile ? 'touchmove' : 'mousemove';
 let whichUp = isMobile ? 'touchend' : 'mouseup';
-timeIndicate.addEventListener(whichDown, e => {
-  document.addEventListener(whichMove, moveIndicator, false);
-}, false);
-
-document.addEventListener(whichUp, e => {
-  document.removeEventListener(whichMove, moveIndicator, false);
-}, false);
+//click/tap to place in track
+trackTime.addEventListener('click', moveIndicator, false);
+//drag to place in track
+timeIndicate.addEventListener(whichDown, e => { document.addEventListener(whichMove, moveIndicator, {passive: false}); }, false);
+document.addEventListener(whichUp, e => { document.removeEventListener(whichMove, moveIndicator, {passive: false}); }, false);
 
 function setNextSong(list=songs) {
   saveTime = 0;
@@ -305,6 +303,8 @@ const closeAll = () => {
 document.addEventListener('keydown', e => {
   if (e.keyCode === 27) { closeAll(); }
   if (e.keyCode === 32 && !upPop) { toggle(); }
+  if (e.keyCode === 176) {}//skip to next track
+  if (e.keyCode === 177) {}//skip backwards
 }, false);
 
 document.addEventListener(whichDown, e => {
