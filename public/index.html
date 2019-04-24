@@ -44,7 +44,7 @@
         <form id="uploadForm">
           <h4>Upload songs</h4>
           <label>Title <input id="getTitle" type="text"></label>
-          <label>Artist <input id="getArtist" type="text"></label>
+          <label>Artist <input id="getArtist" type="text" placeholder="unknown"></label>
           <input id="file" type="file" accept="audio/mp3">
           <div>
             <label id="upload" class="getfile" for="file">Choose file</label>
@@ -54,6 +54,18 @@
           <p id="uploadbtn" class="getfile">Upload</p>
         </form>
       </div>
+      <div id="editSong" class="popup">
+        <h3>Edit track</h3>
+        <label>Title <input id="editTitle" type="text"></label>
+        <label>Artist <input id="editArtist" type="text"></label>
+        <button id="closeEdit">Save</button>
+      </div>
+    </div>
+    <div id="contextMenu" class='none'>
+      <ul>
+        <li>Rename</li>
+        <li>Delete</li>
+      </ul>
     </div>
     <div id="buttons">
       <button id="uploadPopbtn">Upload</button>

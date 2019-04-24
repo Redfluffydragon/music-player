@@ -17,7 +17,10 @@ let uploadPopbtn = document.getElementById('uploadPopbtn');
 let uploadpopup = document.getElementById('uploadpopup');
 let byUrl = document.getElementById('byUrl');
 
-let images = document.getElementsByTagName('img');
+let contextMenu = document.getElementById('contextMenu');
+let editSong = document.getElementById('editSong');
+let editTitle = document.getElementById('editTitle');
+let editArtist = document.getElementById('editArtist');
 
 let songsList = document.getElementById('songsList');
 let getList = songsList.getElementsByClassName('dt');
@@ -29,8 +32,6 @@ let trackTime = document.getElementById('trackTime');
 let doneGone = document.getElementById('doneGone');
 let seeTime = document.getElementById('seeTime');
 
-let modebtn = document.getElementById('modebtn');
-
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
 let preloaded = [
@@ -40,6 +41,9 @@ let preloaded = [
 
 let getFile;
 let upPop = false;
+let popup = false;
+
+let passSong;
 
 let currentAudio = document.getElementById('currentAudio');
 
@@ -79,18 +83,13 @@ let draw = () => {
   songsList.innerHTML = '';
   for (i in songs) {
     let dt = document.createElement('dt');
-    let title = songs[i].title+'<br>'+songs[i].artist;
+    let title = songs[i].title+'<br><em>'+songs[i].artist+'</em>';
     dt.innerHTML = title;
     dt.className = 'dt';
     songsList.appendChild(dt);
   }
   seeSong.textContent = songs[currentSong].title;
-  for (let i in getList) {
-    if (getList[i].textContent === songs[currentSong].title+songs[currentSong].artist) {
-      getList[i].setAttribute('selected', true);
-      return;
-    }
-  }
+  getList[currentSong].setAttribute('selected', true);
 };
 
 let clickList = () => {
@@ -119,7 +118,36 @@ let clickList = () => {
     else { toggle(); } //don't switch, and toggle
     seeSong.textContent = findName;
   }, false);
+  songsList.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    contextMenu.classList.remove('none');
+    contextMenu.style.top = e.clientY+'px';
+    contextMenu.style.left = e.clientX+'px';
+    passSong = e.target.innerHTML.split('<br>');
+  }, false);
 };
+
+contextMenu.addEventListener('click', e => {
+  let t = e.target.textContent;
+  if (t === 'Rename') {
+    popup = true;
+    editPop = true;
+    contextMenu.classList.add('none');
+    editSong.classList.add('inlineBlock');
+    editTitle.value = passSong[0];
+    editArtist.value = passSong[1].replace(/<|em|>|\//g, '');
+  }
+  else if (t === 'Delete') {
+    contextMenu.classList.add('none');
+    let delConf = confirm('Delete this track?');
+    if (delConf) {
+      //~delete song~
+    }
+  }
+}, false);
+contextMenu.addEventListener('contextmenu', e => {
+  e.preventDefault();
+}, false);
 
 let switchList = () => {
   for (let i = 0; i < getList.length; i++) {
@@ -185,7 +213,6 @@ uploadbtn.addEventListener('click', () => { //upload a new song
   if (byUrl.value !== '') {
     let url = byUrl.value;
     newSong = url.includes('drive.google') ? 'http://docs.google.com/uc?export=open&id='+url.slice(-33) : url;
-    console.log(newSong);
     temptitle = url.slice(0, 40);
   }
   else if (getFile) {
@@ -209,13 +236,13 @@ file.addEventListener('change', () => {
   if (getnames[1] !== undefined) {
     temptitle = getnames[1];
     tempartist = getnames[0];
+    getArtist.value = tempartist;
   }
   else {
     temptitle = getFile.name.slice(0, -4);
     tempartist = 'unknown';
   }
   getTitle.value = temptitle;
-  getArtist.value = tempartist;
   byUrl.disabled = true;
 }, false);
 
@@ -224,6 +251,7 @@ uploadPopbtn.addEventListener('click', () => {
   uploadpopup.classList.add('inlineBlock');
   shadow.classList.remove('none');
   upPop = true;
+  popup = true;
 }, false);
 
 let moveIndicator = e => {
@@ -284,15 +312,30 @@ currentAudio.addEventListener('ended', nextTrack[next], false);
 
 const closeAll = () => {
   uploadpopup.classList.remove('inlineBlock');
+  editSong.classList.remove('inlineBlock');
+  contextMenu.classList.add('none');
   shadow.classList.add('none');
-  getTitle.value = '';
-  getArtist.value = '';
-  temptitle = '';
-  tempartist = 'unknown';
-  byUrl.value = '';
-  byUrl.disabled = false;
-  showFile.textContent = 'No file chosen';
+  if (upPop) {
+    getTitle.value = '';
+    getArtist.value = '';
+    temptitle = '';
+    tempartist = '';
+    byUrl.value = '';
+    byUrl.disabled = false;
+    showFile.textContent = 'No file chosen';
+  }
+  if (editPop) {
+    for (let i in songs) {
+      if (passSong[0] === songs[i].title) {
+        if (editTitle.value !== '') { songs[i].title = editTitle.value; }
+        if (editArtist.value !== '') { songs[i].artist = editArtist.value; }
+        localStorage.setItem('songs', JSON.stringify(songs));
+        draw();
+      }
+    }
+  }
   upPop = false;
+  popup = false;
 };
 
 let switchMode = () => {
@@ -303,12 +346,10 @@ let switchMode = () => {
   pausebtn.classList.toggle('invert');
 }
 
-modebtn.addEventListener('click', switchMode, false);
-
 document.addEventListener('keydown', e => {
   let k = e.keyCode;
   if (k === 27) { closeAll(); }
-  if (!upPop) {
+  if (!popup) {
     if (k === 32) { toggle(); }
     if (k === 77) {switchMode();}
     if (k === 176) {nextTrack[next]();} //skip to next track
@@ -323,20 +364,33 @@ document.addEventListener('keydown', e => {
 }, false);
 
 document.addEventListener(whichDown, e => {
-  if (e.target.closest('.popup')) return;
-  if (upPop) {closeAll();}
+  if (!e.target.closest('.popup')) {
+    if (popup) {closeAll();}
+  }
+  if (!e.target.closest('#contextMenu')) {
+    contextMenu.classList.add('none');
+  }
 }, false);
 
-window.addEventListener('beforeunload', () => {
+document.addEventListener('click', e => {
+  let t = e.target;
+  if (t.matches('#closeEdit')) { closeAll(); }
+  if (t.matches('#modebtn')) {switchMode();}
+}, false);
+
+function beforeUnload() {
   saveTime = currentAudio.currentTime;
   localStorage.setItem('saveTime', JSON.stringify(saveTime));
   localStorage.setItem('currentSong', JSON.stringify(currentSong));
-}, false);
+}
+
+window.addEventListener('beforeunload', beforeUnload, false);
 
 document.getElementById('clearall').addEventListener('click', () => {
   currentSong = 0;
   localStorage.clear();
   sessionStorage.clear();
+  window.removeEventListener('beforeunload', beforeUnload, false);
   location.reload();
   console.log('Cleared!');
 }, false);
