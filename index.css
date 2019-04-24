@@ -162,6 +162,14 @@ dt {
 
 .dt[selected=true] {background: #b70909;}
 
+#songsbtn {
+  display: none;
+  /* width: 90vw;
+  left: 5vw;
+  position: absolute;
+  top: 5vw; */
+}
+
 #clearall {
   position: absolute;
   right: 1vmin;
@@ -183,6 +191,34 @@ dt {
   background: white;
 }
 
+#contextMenu {
+  position: absolute;
+  background: white;
+  box-shadow: 5px 5px 10px lightgray;
+  z-index: 4;
+  min-width: 20vw;
+}
+
+#contextMenu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#contextMenu li {
+  padding: 2px;
+  cursor: pointer;
+}
+
+#contextMenu li:hover {
+  background: gray;
+}
+
+#editSong input {
+  display: block;
+  margin: 5px;
+}
+
 #shadow {
   position: absolute;
   top: 0;
@@ -200,6 +236,11 @@ dt {
     height: 13px;
     top: -3px;
   }
+}
+
+@media screen and (max-width: 420px) {
+  #songsList {display: none; width: 98vw; max-height: 80vh; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
+  #songsbtn {display: initial;}
 }
 
 .none {

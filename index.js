@@ -42,6 +42,7 @@ let preloaded = [
 let getFile;
 let upPop = false;
 let popup = false;
+let seeSongs;
 
 let passSong;
 
@@ -141,13 +142,19 @@ contextMenu.addEventListener('click', e => {
     contextMenu.classList.add('none');
     let delConf = confirm('Delete this track?');
     if (delConf) {
-      //~delete song~
+      for (let i in songs) {
+        if (songs[i].title === passSong[0]) {
+          songs.splice(i, 1);
+          localStorage.setItem('songs', JSON.stringify(songs));
+          saveTime = currentAudio.currentTime;
+          draw();
+          return;
+        }
+      }
     }
   }
 }, false);
-contextMenu.addEventListener('contextmenu', e => {
-  e.preventDefault();
-}, false);
+contextMenu.addEventListener('contextmenu', e => { e.preventDefault(); }, false);
 
 let switchList = () => {
   for (let i = 0; i < getList.length; i++) {
@@ -330,6 +337,7 @@ const closeAll = () => {
         if (editTitle.value !== '') { songs[i].title = editTitle.value; }
         if (editArtist.value !== '') { songs[i].artist = editArtist.value; }
         localStorage.setItem('songs', JSON.stringify(songs));
+        saveTime = currentAudio.currentTime;
         draw();
       }
     }
@@ -376,6 +384,13 @@ document.addEventListener('click', e => {
   let t = e.target;
   if (t.matches('#closeEdit')) { closeAll(); }
   if (t.matches('#modebtn')) {switchMode();}
+  if (t.matches('#songsbtn')) {
+    seeSongs ? songsList.style.display = 'none' : songsList.style.display = 'initial';
+    seeSongs = seeSongs ? false : true;
+  }
+  if (!t.closest('#songsList') && window.innerWidth <= 420) {
+    // if (seeSongs) {songsList.style.display = 'none';}
+  }
 }, false);
 
 function beforeUnload() {

@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A simple online music player.">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
     <title>Musicorae</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" sizes="620x620" href="apple-touch-icon.png">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" async>
-    <script src="music-player.js" type="text/javascript" async></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="index.css" async>
+    <script src="index.js" type="text/javascript" async></script>
   </head>
   <body>
     <audio id="currentAudio"></audio>
@@ -44,7 +45,7 @@
         <form id="uploadForm">
           <h4>Upload songs</h4>
           <label>Title <input id="getTitle" type="text"></label>
-          <label>Artist <input id="getArtist" type="text"></label>
+          <label>Artist <input id="getArtist" type="text" placeholder="unknown"></label>
           <input id="file" type="file" accept="audio/mp3">
           <div>
             <label id="upload" class="getfile" for="file">Choose file</label>
@@ -54,10 +55,23 @@
           <p id="uploadbtn" class="getfile">Upload</p>
         </form>
       </div>
+      <div id="editSong" class="popup">
+        <h3>Edit track</h3>
+        <label>Title <input id="editTitle" type="text"></label>
+        <label>Artist <input id="editArtist" type="text"></label>
+        <button id="closeEdit">Save</button>
+      </div>
+    </div>
+    <div id="contextMenu" class='none'>
+      <ul>
+        <li>Rename</li>
+        <li>Delete</li>
+      </ul>
     </div>
     <div id="buttons">
       <button id="uploadPopbtn">Upload</button>
       <button id="modebtn">Mode</button>
+      <button id="songsbtn">Songs</button>
       <button id="clearall">Clear</button>
     </div>
     </div>
