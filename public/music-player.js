@@ -3,7 +3,7 @@
  * 
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
  */
-// localStorage.clear();
+localStorage.clear();
 
 let playbtn = document.getElementById('play');
 let pausebtn = document.getElementById('pause');
