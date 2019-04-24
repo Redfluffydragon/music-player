@@ -56,7 +56,7 @@ let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
 let lmode = gotchem('lmode', true);
 let currentSong = gotchem('currentSong', 0);
-if (currentSong > songs.length) {
+if (currentSong > songs.length-1) {
   currentSong = 0;
 }
 
