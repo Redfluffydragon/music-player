@@ -1,6 +1,5 @@
 /**
  * Save songs uploaded
- * Firebase?
  * 
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
  */
@@ -50,9 +49,9 @@ let gotchem = (item, defalt, type=localStorage) => {
   return defalt;
 };
 
+let songs = gotchem('songs', preloaded);
 let currentSong = gotchem('currentSong', 0);
 let saveTime = gotchem('saveTime', 0);
-let songs = gotchem('songs', preloaded);
 let unplayed = gotchem('unplayed', songs);
 let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
@@ -186,23 +185,7 @@ uploadbtn.addEventListener('click', () => { //upload a new song
   }
   else if (getFile) {
     newSong = getFile.name;
-    let xhr = new XMLHttpRequest();
-    xhr.responseType = "arraybuffer";
-    xhr.onload = function() {
-      console.log(xhr.response);
-      audioCtx.decodeAudioData(audioData, function(buffer) {
-        myBuffer = buffer;
-        songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.playbackRate.value = playbackControl.value;
-        source.connect(audioCtx.destination);
-        source.loop = true;
-
-        loopstartControl.setAttribute('max', Math.floor(songLength));
-        loopendControl.setAttribute('max', Math.floor(songLength));
-      });
-    }
-    xhr.open("GET", "test.mp3", true);
+    fileToArrBuf(getFile);
   }
   else { return; }
   title = getTitle.value ? getTitle.value : temptitle;
@@ -381,47 +364,19 @@ function createStore() {
 
 };
 
-function downloadFile(file) {
-  let xhr/*  = new XMLHttpRequest() */;
-  let blob;
-  xhr.responseType = 'blob';
-  xhr.onreadystatechange = function(e) {
-    console.log('state changed');
-    if (xhr.state > 2) {
-      console.log('new state');
-    }
-  };
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      console.log('File gotten');
-      blob = xhr.response;
-      console.log(xhr.response);
-      // ~store in indexedDB
-    }
-  };
-  xhr.onerror = function(e) {
-    console.log(e, 'error');
-  }
-  console.log(xhr);
-  xhr.open('GET', file, true);
-}
-
 function fileToArrBuf(filet) {
   var xhr = new XMLHttpRequest();
 
   xhr.responseType = 'arraybuffer';
-  xhr.onreadystatechange = function() {
-    console.log('state');
-    console.log(xhr.readyState);
-    if (xhr.state > 2) {
-      console.log('new state');
-    }
-  };
   xhr.onload = function() {
     console.log(xhr.response);
+    // ~store in IndexedDB~
+  }
+  xhr.onerror = function(e) {
+    console.log(e, 'error');
   }
   xhr.open('GET', filet, true);
+  xhr.send();
 }
 
-fileToArrBuf('https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj');
-fileToArrBuf('test.mp3');
+// fileToArrBuf('test.mp3');
