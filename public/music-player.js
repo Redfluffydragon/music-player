@@ -85,6 +85,7 @@ let draw = () => {
   for (let i in getList) {
     if (getList[i].textContent === songs[currentSong].title+songs[currentSong].artist) {
       getList[i].setAttribute('selected', true);
+      return;
     }
   }
 };
@@ -128,6 +129,7 @@ let onStart = () => {
   clickList();
 }
 window.addEventListener('load', onStart, false);
+window.addEventListener('resize', indicator, false);
 
 
 let play = () => {
@@ -303,16 +305,18 @@ modebtn.addEventListener('click', switchMode, false);
 document.addEventListener('keydown', e => {
   let k = e.keyCode;
   if (k === 27) { closeAll(); }
-  if (k === 32 && !upPop) { toggle(); }
-  if (k === 77) {switchMode();}
-  if (k === 176) {nextTrack[next]();} //skip to next track
-  if (k === 177) {
-    if (currentAudio.currentTime > 1) { //check where others cut off
-      currentAudio.currentTime = 0;
+  if (!upPop) {
+    if (k === 32) { toggle(); }
+    if (k === 77) {switchMode();}
+    if (k === 176) {nextTrack[next]();} //skip to next track
+    if (k === 177) { //skip backwards
+      if (currentAudio.currentTime > 1) { //check where others cut off
+        currentAudio.currentTime = 0;
+      }
     }
-  }//skip backwards
-  if (k === 39) {currentAudio.currentTime += 5;}
-  if (k === 37) {currentAudio.currentTime -= 5;}
+    if (k === 39) {currentAudio.currentTime += 5;}
+    if (k === 37) {currentAudio.currentTime -= 5;}
+  }
 }, false);
 
 document.addEventListener(whichDown, e => {
@@ -378,5 +382,3 @@ function fileToArrBuf(filet) {
   xhr.open('GET', filet, true);
   xhr.send();
 }
-
-// fileToArrBuf('test.mp3');
