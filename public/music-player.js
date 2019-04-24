@@ -1,6 +1,6 @@
 /**
- * Save songs uploaded
- * 
+ * Save songs uploaded, for offline
+
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
  */
 // localStorage.clear();
@@ -56,7 +56,6 @@ let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
 let lmode = gotchem('lmode', true);
 let currentSong = gotchem('currentSong', 0);
-console.log(currentSong);
 if (currentSong > songs.length-1) {
   currentSong = 0;
 }
@@ -156,7 +155,7 @@ function toMinutes(time) {
   let minutes = Math.trunc(time/60);
   let seconds = Math.round((Math.trunc(time-minutes*60)/100)*100);
   if (seconds < 10) { seconds = '0' + seconds; }
-  return minutes + ':' + seconds;
+  return isNaN(seconds) ? '0:00' : minutes+':'+seconds;
 }
 
 //for outside media controls
