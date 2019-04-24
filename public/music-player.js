@@ -50,12 +50,15 @@ let gotchem = (item, defalt, type=localStorage) => {
 };
 
 let songs = gotchem('songs', preloaded);
-let currentSong = gotchem('currentSong', 0);
 let saveTime = gotchem('saveTime', 0);
 let unplayed = gotchem('unplayed', songs);
 let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
 let lmode = gotchem('lmode', true);
+let currentSong = gotchem('currentSong', 0);
+if (currentSong > songs.length) {
+  currentSong = 0;
+}
 
 let indicator = () => {
   requestAnimationFrame(() => {
