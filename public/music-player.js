@@ -174,13 +174,14 @@ playPause.addEventListener('click', () => {
 let temptitle;
 let tempartist;
 
-uploadbtn.addEventListener('click', () => {
+uploadbtn.addEventListener('click', () => { //upload a new song
   let newSong;
   let title;
   let artist;
   if (byUrl.value !== '') {
     let url = byUrl.value;
     newSong = url.includes('drive.google') ? 'http://docs.google.com/uc?export=open&id='+url.slice(-33) : url;
+    console.log(newSong);
     temptitle = url.slice(0, 40);
   }
   else if (getFile) {
