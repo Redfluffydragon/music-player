@@ -334,6 +334,7 @@ window.addEventListener('beforeunload', () => {
 }, false);
 
 document.getElementById('clearall').addEventListener('click', () => {
+  currentSong = 0;
   localStorage.clear();
   sessionStorage.clear();
   location.reload();
