@@ -3,7 +3,7 @@
  * 
 https://drive.google.com/open?id=1AUR-uvIKe4gDWCPweBMEWgchS3x6H9Yj
  */
-localStorage.clear();
+// localStorage.clear();
 
 let playbtn = document.getElementById('play');
 let pausebtn = document.getElementById('pause');
@@ -56,6 +56,7 @@ let next = gotchem('next', 'next');
 let loop = gotchem('loop', true);
 let lmode = gotchem('lmode', true);
 let currentSong = gotchem('currentSong', 0);
+console.log(currentSong);
 if (currentSong > songs.length-1) {
   currentSong = 0;
 }
