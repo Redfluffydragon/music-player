@@ -52,7 +52,7 @@ audio {
   height: 7px;
   background: gray;
   position: absolute;
-  border-radius: 2.5px;
+  border-radius: 3.5px;
   left: 30vw;
   justify-content: center;
   cursor: pointer;
@@ -83,6 +83,47 @@ audio {
   margin: 0;
   display: inline-block;
   border-radius: 3.5px;
+}
+
+#adjustAudio {
+  width: 25vw;
+  height: 7px;
+  background: gray;
+  position: absolute;
+  border-radius: 3.5px;
+  left: 40vw;
+  top: 120px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#showAudioLevel {
+  position: absolute;
+  left: 0;
+  height: 7px;
+  background: black;
+  width: 100%;
+  margin: 0;
+  display: inline-block;
+  border-radius: 3.5px;
+}
+
+#audioSlider {
+  width: 10px;
+  height: 7px;
+  background: rgb(80, 80, 80);
+  border-radius: 3.5px;
+  position: absolute;
+  left: calc(100% - 7px);
+  display: inline-block;
+  margin: 0;
+  /* left: -7px; */
+}
+
+#audioSlider:hover {
+  height: 10px;
+  top: -1.5px;
+  border-radius: 50%;
 }
 
 #file {
